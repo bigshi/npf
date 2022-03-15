@@ -8,7 +8,10 @@ package server
 import (
 	"../glog"
 	"net"
+	"strings"
 )
+
+var whiteIps = []string{"127.0.0.1"}
 
 // 监听客户端连接
 func ListenClientTcp(port int) {
@@ -26,7 +29,18 @@ func ListenClientTcp(port int) {
 			glog.Errorf("ListenClientTcp accept fail - port:%d, err:%v", port, err)
 			continue
 		}
-		glog.Infof("ListenClientTcp accept success - localAddr:%v, remoteAddr:%v", conn.LocalAddr(), conn.RemoteAddr())
+		remoteAddr := conn.RemoteAddr().String()
+		var isOk bool
+		for _, s := range whiteIps {
+			if strings.Contains(remoteAddr, s) {
+				isOk = true
+			}
+		}
+		if !isOk {
+			glog.Errorf("ListenClientTcp accept fail - msg:no auth ip,localAddr:%v, remoteAddr:%v", conn.LocalAddr(), remoteAddr)
+			continue
+		}
+		glog.Infof("ListenClientTcp accept success - localAddr:%v, remoteAddr:%v", conn.LocalAddr(), remoteAddr)
 		go handleClientConn(conn)
 	}
 }

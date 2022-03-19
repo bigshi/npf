@@ -9,9 +9,10 @@ import (
 	"../glog"
 	"net"
 	"strings"
+	"time"
 )
 
-var whiteIps = []string{"39.170.35.150", "112.16.91.49"}
+var whiteIps = []string{"39.170.35.150", "112.16.91.49", "127.0.0.1"}
 
 // 监听客户端连接
 func ListenClientTcp(port int) {
@@ -50,12 +51,24 @@ func handleClientConn(conn *net.TCPConn) {
 	localAddr := conn.LocalAddr()
 	remoteAddr := conn.RemoteAddr()
 	key := remoteAddr.String()
-	// 如果有了，避免多余的重复连
-	isOk := clientConnCache.Add(key, conn)
-	if !isOk {
+	conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+	receiveMsg := make([]byte, 1024)
+	n, err := conn.Read(receiveMsg)
+	if err != nil {
+		glog.Errorf("handleClientConn fail - localAddr:%v, remoteAddr:%v, err:%v", localAddr, remoteAddr, err)
 		conn.Close()
-		glog.Errorf("handleClientConn fail - localAddr:%v, remoteAddr:%v, msg:client conn is exists", localAddr, remoteAddr)
 		return
+	}
+	msg := string(receiveMsg[:n])
+	if msg != "I'm Client" {
+		glog.Errorf("handleClientConn fail - msg:receiveMsg is error, localAddr:%v, remoteAddr:%v, receiveMsg:%s", localAddr, remoteAddr, err, msg)
+		conn.Close()
+		return
+	}
+	conn.SetKeepAlive(true)
+	oldConn, isOk := clientConnCache.Add(key, conn)
+	if !isOk {
+		oldConn.Close()
 	}
 	clientConnEqualizer.Add(key)
 	glog.Infof("handleClientConn success - localAddr:%v, remoteAddr:%v", localAddr, remoteAddr)

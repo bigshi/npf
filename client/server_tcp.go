@@ -26,6 +26,14 @@ func makeServerConn(ip string, port string) {
 		return
 	}
 	serverConn = conn
+	_, err = conn.Write([]byte("I'm Client"))
+	conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
+	if err != nil {
+		glog.Errorf("MakeServerConn fail -  localAddr:%v, remoteAddr:%v, err:%v", conn.LocalAddr(), conn.RemoteAddr(), err)
+		conn.Close()
+		ServerConnChannel <- true
+		return
+	}
 	connChannel <- true
 	glog.Infof("MakeServerConn success -  localAddr:%v, remoteAddr:%v", conn.LocalAddr(), conn.RemoteAddr())
 }

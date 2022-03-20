@@ -9,6 +9,7 @@ import (
 	"../glog"
 	"io"
 	"net"
+	"strings"
 )
 
 func Bridge(conn1 *net.TCPConn, conn2 *net.TCPConn) {
@@ -20,4 +21,12 @@ func Bridge(conn1 *net.TCPConn, conn2 *net.TCPConn) {
 		glog.Errorf("Bridge fail - conn1:%v, conn2:%v, err:%v", conn1.RemoteAddr(), conn2.RemoteAddr(), err)
 		return
 	}
+}
+
+func GetIp(addr net.Addr) string {
+	adr := addr.String()
+	if strings.HasPrefix(adr, "[") && strings.HasSuffix(adr, "]") {
+		return adr[1 : len(adr)-1]
+	}
+	return adr[:strings.Index(adr, ":")]
 }

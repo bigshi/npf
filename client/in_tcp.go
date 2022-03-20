@@ -26,6 +26,8 @@ func makeInConn(ip string, port string) {
 		return
 	}
 	inConn = conn
+	//conn.SetDeadline(time.Now().Add(3 * time.Second))
+	conn.SetKeepAlive(true)
 	connChannel <- true
 	glog.Infof("MakeInConn success -  localAddr:%v, remoteAddr:%v", conn.LocalAddr(), conn.RemoteAddr())
 }

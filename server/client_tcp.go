@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-var whiteIps = []string{"39.170.35.150", "112.16.91.49", "127.0.0.1"}
+var whiteIps = []string{"127.0.0.1"}
 
 // 监听客户端连接
 func ListenClientTcp(port int) {

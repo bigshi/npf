@@ -16,8 +16,7 @@ func main() {
 	glog.Launch("/data/logs", appName)
 	glog.Infof("server starting - appName:%s", appName)
 
-	serverIp := "47.96.18.114"
-	//serverIp := "127.0.0.1"
+	serverIp := "127.0.0.1"
 
 	serverPort := "8090"
 	inIp := "127.0.0.1"

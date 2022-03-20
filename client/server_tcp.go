@@ -26,6 +26,7 @@ func makeServerConn(ip string, port string) {
 		return
 	}
 	serverConn = conn
+	conn.SetKeepAlive(true)
 	connChannel <- true
 	glog.Infof("MakeServerConn success -  localAddr:%v, remoteAddr:%v", conn.LocalAddr(), conn.RemoteAddr())
 }

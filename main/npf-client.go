@@ -3,7 +3,6 @@
  * User: luchao
  * Email: luc@shinemo.com
  */
-// 账号中心-核心层
 package main
 
 import (
@@ -11,14 +10,15 @@ import (
 	"../glog"
 )
 
-// 基础中心 - 核心层
 func main() {
 	appName := "npf-client"
 
 	glog.Launch("/data/logs", appName)
 	glog.Infof("server starting - appName:%s", appName)
 
-	serverIp := "127.0.0.1"
+	serverIp := "47.96.18.114"
+	//serverIp := "127.0.0.1"
+
 	serverPort := "8090"
 	inIp := "127.0.0.1"
 	inPort := "8091"

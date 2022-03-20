@@ -17,9 +17,9 @@ func Bridge() {
 	for {
 		<-connChannel
 		<-connChannel
-		go util.Bridge(serverConn, inConn)
+		go util.Bridge(inConn, serverConn)
 		glog.Infof("Bridge success - conn1:%v, conn2:%v", serverConn.RemoteAddr(), inConn.RemoteAddr())
-		util.Bridge(inConn, serverConn)
+		util.Bridge(serverConn, inConn)
 		InConnChannel <- true
 		ServerConnChannel <- true
 	}

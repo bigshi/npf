@@ -23,16 +23,16 @@ var clientConnCache = ClientConnCache{
 }
 
 // 添加客户端连接
-func (cache *ClientConnCache) Add(key string, conn *net.TCPConn) bool {
+func (cache *ClientConnCache) Add(key string, conn *net.TCPConn) (*net.TCPConn, bool) {
 	cache.Lock.Lock()
 	defer cache.Lock.Unlock()
-	_, isOk := cache.ConnMap[key]
+	oldConn, isOk := cache.ConnMap[key]
+	cache.ConnMap[key] = conn
 	// 已经存在
 	if isOk {
-		return false
+		return oldConn, false
 	}
-	cache.ConnMap[key] = conn
-	return true
+	return nil, true
 }
 
 // 删除客户端连接

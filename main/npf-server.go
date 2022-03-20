@@ -3,7 +3,6 @@
  * User: luchao
  * Email: luc@shinemo.com
  */
-// 账号中心-核心层
 package main
 
 import (
@@ -12,7 +11,6 @@ import (
 	"time"
 )
 
-// 基础中心 - 核心层
 func main() {
 	appName := "npf-server"
 

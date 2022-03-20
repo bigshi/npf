@@ -34,6 +34,8 @@ func ListenExtTcp(port int) {
 
 // 处理外部连接
 func handleExtConn(conn *net.TCPConn) {
+	//conn.SetDeadline(time.Now().Add(3 * time.Second))
+	conn.SetKeepAlive(true)
 	remoteAddr := conn.RemoteAddr()
 	clientConn, isOk := clientConnCache.Get(clientConnEqualizer.GetNextKey())
 	if !isOk {

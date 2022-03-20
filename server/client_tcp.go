@@ -7,11 +7,12 @@ package server
 
 import (
 	"../glog"
+	"../util"
 	"net"
 	"strings"
 )
 
-var whiteIps = []string{"127.0.0.1"}
+var whiteIps = []string{"39.170.35.150", "112.16.91.49", "127.0.0.1"}
 
 // 监听客户端连接
 func ListenClientTcp(port int) {
@@ -34,6 +35,7 @@ func ListenClientTcp(port int) {
 		for _, s := range whiteIps {
 			if strings.Contains(remoteAddr, s) {
 				isOk = true
+				break
 			}
 		}
 		if !isOk {
@@ -49,13 +51,11 @@ func ListenClientTcp(port int) {
 func handleClientConn(conn *net.TCPConn) {
 	localAddr := conn.LocalAddr()
 	remoteAddr := conn.RemoteAddr()
-	key := remoteAddr.String()
-	// 如果有了，避免多余的重复连
-	isOk := clientConnCache.Add(key, conn)
+	key := util.GetIp(remoteAddr)
+	conn.SetKeepAlive(true)
+	oldConn, isOk := clientConnCache.Add(key, conn)
 	if !isOk {
-		conn.Close()
-		glog.Errorf("handleClientConn fail - localAddr:%v, remoteAddr:%v, msg:client conn is exists", localAddr, remoteAddr)
-		return
+		oldConn.Close()
 	}
 	clientConnEqualizer.Add(key)
 	glog.Infof("handleClientConn success - localAddr:%v, remoteAddr:%v", localAddr, remoteAddr)
